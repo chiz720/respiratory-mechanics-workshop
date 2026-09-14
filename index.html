@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mechanical Ventilation: Respiratory Mechanics</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- 1. Title -->
+      <section>
+        <div class="title-slide">
+          <div class="kicker">Workshop &middot; Mechanical Ventilation</div>
+          <h1>Respiratory Mechanics</h1>
+          <p class="subtitle" style="font-size:0.9em;">From the four primary variables to mean airway pressure, dead space, the equation of motion, time constant, and mechanical power &mdash; taught through live, adjustable graphs.</p>
+          <p class="presenter">Idris Chikophe<br/><span class="presenter-role">Paediatric Cardiothoracic Anaesthesiologist &amp; Critical Care Practitioner</span></p>
+        </div>
+      </section>
+
+      <!-- 2. Objectives / roadmap -->
+      <section>
+        <h2>Roadmap</h2>
+        <div class="card-grid">
+          <div class="card"><h3>1&nbsp;&middot;&nbsp;Primary Mechanics</h3><p>Volume, Pressure, Flow, Time, plus mean airway pressure and dead space ventilation.</p></div>
+          <div class="card"><h3>2&nbsp;&middot;&nbsp;Derived Mechanics</h3><p>Resistance and Compliance &mdash; how the respiratory system relates pressure, flow and volume.</p></div>
+          <div class="card"><h3>3&nbsp;&middot;&nbsp;Equation of Motion</h3><p>Combining resistance and compliance into one governing equation.</p></div>
+          <div class="card"><h3>4&nbsp;&middot;&nbsp;Time Constant &amp; Power</h3><p>τ = R×C, gas trapping, and how work per breath becomes mechanical power.</p></div>
+        </div>
+        <p style="margin-top:1em;">Every highlighted panel below is <strong>interactive</strong> &mdash; drag the sliders to see the physiology respond in real time.</p>
+      </section>
+
+      <!-- 3. Section divider: Primary Mechanics -->
+      <section class="section-divider">
+        <div class="divider-inner">
+          <div class="divider-index">Section A</div>
+          <h2>Primary Mechanics</h2>
+          <p class="divider-sub">Volume &middot; Pressure &middot; Flow &middot; Time</p>
+        </div>
+      </section>
+
+      <!-- 4. Overview: 4 variables -->
+      <section>
+        <h2>The Four Primary Variables</h2>
+        <div class="card-grid">
+          <div class="card"><h3>Volume</h3><span class="unit">mL / L</span><p>Amount of gas delivered. The integral of flow over time.</p></div>
+          <div class="card"><h3>Pressure</h3><span class="unit">cmH&#8322;O</span><p>Force driving gas into the airway/lung. Result of resistance + elastance.</p></div>
+          <div class="card"><h3>Flow</h3><span class="unit">L/min or L/s</span><p>Rate of gas delivery. The derivative of volume over time.</p></div>
+          <div class="card"><h3>Time</h3><span class="unit">seconds</span><p>Governs inspiratory/expiratory duration, I:E ratio and respiratory rate.</p></div>
+        </div>
+        <p style="margin-top:1em;">One of these is always the <strong>independent (set)</strong> variable depending on mode; the others follow.</p>
+      </section>
+
+      <!-- 5. Volume -->
+      <section>
+        <h2>Volume</h2>
+        <p>Volume is the <strong>integral of flow</strong> &mdash; as gas flows in, volume accumulates until the set tidal volume (V<sub>T</sub>) is reached.</p>
+        <div class="viz">
+          <div class="control-panel control-panel-grid">
+            <div class="control">
+              <label for="volume-vt-slider">Tidal Volume</label>
+              <input type="range" id="volume-vt-slider" min="200" max="800" step="10" value="450" />
+              <span class="value-out" id="volume-vt-output">450 mL</span>
+            </div>
+            <div class="control">
+              <label for="volume-ti-slider">Insp. Time</label>
+              <input type="range" id="volume-ti-slider" min="0.5" max="2" step="0.05" value="1" />
+              <span class="value-out" id="volume-ti-output">1.00 s</span>
+            </div>
+          </div>
+          <div class="chart-container" id="volume-chart"></div>
+        </div>
+      </section>
+
+      <!-- 6. Flow -->
+      <section>
+        <h2>Flow &mdash; and the Volume it Produces</h2>
+        <p>The <strong>shape</strong> of the flow waveform determines the shape of the volume curve. Compare a constant (square) flow to a decelerating flow.</p>
+        <div class="viz">
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="flow-shape-square" data-shape="square">Square (constant) flow</button>
+            <button class="toggle-btn" id="flow-shape-decel" data-shape="decel">Decelerating flow</button>
+          </div>
+          <div class="control-panel">
+            <div class="control">
+              <label for="flow-peak-slider">Peak Flow</label>
+              <input type="range" id="flow-peak-slider" min="20" max="80" step="1" value="50" />
+              <span class="value-out" id="flow-peak-output">50 L/min</span>
+            </div>
+          </div>
+          <div class="chart-row">
+            <div id="flow-chart"></div>
+            <div id="flow-volume-chart"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Pressure -->
+      <section>
+        <h2>Pressure</h2>
+        <p>The pressure waveform's shape depends on which variable the ventilator controls.</p>
+        <div class="viz">
+          <div class="toggle-group">
+            <button class="toggle-btn active" id="pressure-mode-vc" data-mode="vc">Volume Control (set flow)</button>
+            <button class="toggle-btn" id="pressure-mode-pc" data-mode="pc">Pressure Control (set pressure)</button>
+          </div>
+          <div class="control-panel">
+            <div class="control">
+              <label for="pressure-peak-slider">Target Pressure</label>
+              <input type="range" id="pressure-peak-slider" min="10" max="40" step="1" value="22" />
+              <span class="value-out" id="pressure-peak-output">22 cmH&#8322;O</span>
+            </div>
+          </div>
+          <div class="chart-container" id="pressure-chart"></div>
+          <p class="caveat" id="pressure-mode-note">Volume Control: constant flow &rarr; pressure rises through inspiration to a peak, then falls at end-inspiration if a pause is applied (plateau).</p>
+        </div>
+      </section>
+
+      <!-- 7b. Mean Airway Pressure -->
+      <section>
+        <h2>Mean Airway Pressure</h2>
+        <p>Paw is the <strong>time-weighted average</strong> pressure across the whole cycle, not just the peak.</p>
+        <div class="viz" style="margin-top:0.3em; padding-top:0.35em;">
+          <div class="toggle-group" style="margin-bottom:0.25em;">
+            <button class="toggle-btn" id="maw-mode-square" data-mode="square">Square / PC-like (K&asymp;1.0)</button>
+            <button class="toggle-btn active" id="maw-mode-ramp" data-mode="ramp">Ascending ramp / VC-like (K&asymp;0.5)</button>
+          </div>
+          <div class="control-panel control-panel-grid" style="margin-bottom:0.2em;">
+            <div class="control">
+              <label for="maw-pip-slider">PIP</label>
+              <input type="range" id="maw-pip-slider" min="15" max="45" step="1" value="28" />
+              <span class="value-out" id="maw-pip-output">28 cmH&#8322;O</span>
+            </div>
+            <div class="control">
+              <label for="maw-peep-slider">PEEP</label>
+              <input type="range" id="maw-peep-slider" min="0" max="20" step="1" value="5" />
+              <span class="value-out" id="maw-peep-output">5 cmH&#8322;O</span>
+            </div>
+            <div class="control">
+              <label for="maw-rr-slider">Resp. Rate</label>
+              <input type="range" id="maw-rr-slider" min="8" max="30" step="1" value="16" />
+              <span class="value-out" id="maw-rr-output">16 /min</span>
+            </div>
+            <div class="control">
+              <label for="maw-ie-slider">I:E Ratio</label>
+              <input type="range" id="maw-ie-slider" min="0.15" max="0.85" step="0.01" value="0.333" />
+              <span class="value-out" id="maw-ie-output">1:2.0</span>
+            </div>
+          </div>
+          <div class="chart-container compact" id="maw-chart"></div>
+          <div class="readout-row compact">
+            <div class="readout"><span class="label">Paw</span><span class="val" id="maw-paw-output">--</span></div>
+            <div class="readout"><span class="label">T<sub>i</sub></span><span class="val" id="maw-ti-output">--</span></div>
+          </div>
+          <p class="caveat" style="margin-top:0.25em;">PIP, PEEP, I:E, or a squarer waveform all raise Paw; RR alone (fixed I:E) does not.</p>
+        </div>
+      </section>
+
+      <!-- 8. Time -->
+      <section>
+        <h2>Time</h2>
+        <p>Respiratory rate and the I:E ratio partition the breath cycle into inspiratory time (T<sub>i</sub>) and expiratory time (T<sub>e</sub>).</p>
+        <div class="viz">
+          <div class="control-panel control-panel-grid">
+            <div class="control">
+              <label for="time-rr-slider">Resp. Rate</label>
+              <input type="range" id="time-rr-slider" min="8" max="30" step="1" value="16" />
+              <span class="value-out" id="time-rr-output">16 /min</span>
+            </div>
+            <div class="control">
+              <label for="time-ie-slider">I:E Ratio</label>
+              <input type="range" id="time-ie-slider" min="1" max="4" step="0.1" value="2" />
+              <span class="value-out" id="time-ie-output">1:2.0</span>
+            </div>
+          </div>
+          <div class="timeline-bar" id="time-timeline"></div>
+          <div class="readout-row">
+            <div class="readout"><span class="label">Cycle time</span><span class="val" id="time-cycle-output">3.75 s</span></div>
+            <div class="readout"><span class="label">T<sub>i</sub></span><span class="val" id="time-ti-output">1.25 s</span></div>
+            <div class="readout"><span class="label">T<sub>e</sub></span><span class="val" id="time-te-output">2.50 s</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8b. Dead Space Ventilation -->
+      <section>
+        <h2>Dead Space Ventilation</h2>
+        <p>Dead space (V<sub>D</sub>) is wasted each breath and barely falls as V<sub>T</sub> changes, so it eats a <strong>bigger share</strong> of small breaths.</p>
+        <div class="viz" style="margin-top:0.3em; padding-top:0.35em;">
+          <div class="toggle-group" style="margin-bottom:0.25em;">
+            <button class="toggle-btn" id="ds-preset-slow">Preset: slow &amp; deep</button>
+            <button class="toggle-btn" id="ds-preset-fast">Preset: fast &amp; shallow</button>
+          </div>
+          <div class="control-panel control-panel-grid" style="margin-bottom:0.2em;">
+            <div class="control">
+              <label for="ds-vt-slider">Tidal Volume</label>
+              <input type="range" id="ds-vt-slider" min="200" max="800" step="10" value="500" />
+              <span class="value-out" id="ds-vt-output">500 mL</span>
+            </div>
+            <div class="control">
+              <label for="ds-rr-slider">Resp. Rate</label>
+              <input type="range" id="ds-rr-slider" min="8" max="35" step="1" value="16" />
+              <span class="value-out" id="ds-rr-output">16 /min</span>
+            </div>
+            <div class="control">
+              <label for="ds-vd-slider">Dead Space</label>
+              <input type="range" id="ds-vd-slider" min="50" max="250" step="5" value="150" />
+              <span class="value-out" id="ds-vd-output">150 mL</span>
+            </div>
+          </div>
+          <div class="chart-container compact" id="ds-chart"></div>
+          <div class="readout-row compact">
+            <div class="readout"><span class="label">V&#775;E</span><span class="val" id="ds-ve-output">--</span></div>
+            <div class="readout"><span class="label">V&#775;A</span><span class="val" id="ds-va-output">--</span></div>
+            <div class="readout"><span class="label">Wasted</span><span class="val" id="ds-wasted-output">--</span></div>
+            <div class="readout" id="ds-ratio-readout"><span class="label">V<sub>D</sub>/V<sub>T</sub></span><span class="val" id="ds-ratio-output">--</span></div>
+          </div>
+          <p class="caveat" style="margin-top:0.25em;">&uarr;V<sub>T</sub> grows V&#775;A more efficiently than &uarr;RR alone &mdash; but both are capped by lung mechanics and gas trapping.</p>
+        </div>
+      </section>
+
+      <!-- 9. Section divider: Derived Mechanics -->
+      <section class="section-divider">
+        <div class="divider-inner">
+          <div class="divider-index">Section B</div>
+          <h2>Derived Mechanics</h2>
+          <p class="divider-sub">Resistance &middot; Compliance</p>
+        </div>
+      </section>
+
+      <!-- 10. Resistance -->
+      <section>
+        <h2>Resistance</h2>
+        <div class="eq">R = &Delta;P / Flow &nbsp; (cmH&#8322;O / L / s)</div>
+        <div class="two-col" style="margin-top:0.6em;">
+          <div class="viz">
+            <div class="control-panel">
+              <div class="control">
+                <label for="r-deltap-slider">&Delta;P (driving)</label>
+                <input type="range" id="r-deltap-slider" min="2" max="30" step="1" value="10" />
+                <span class="value-out" id="r-deltap-output">10 cmH&#8322;O</span>
+              </div>
+              <div class="control">
+                <label for="r-flow-slider">Flow</label>
+                <input type="range" id="r-flow-slider" min="0.3" max="1.7" step="0.05" value="1.0" />
+                <span class="value-out" id="r-flow-output">1.00 L/s</span>
+              </div>
+            </div>
+            <div class="readout-row">
+              <div class="readout" id="r-value-readout"><span class="label">Resistance</span><span class="val" id="r-value-output">10.0</span></div>
+            </div>
+            <p class="caveat">Illustrative reference only: roughly &lt;10 low, 10&ndash;20 elevated, &gt;20 markedly elevated (e.g. bronchospasm, secretions).</p>
+          </div>
+          <div class="viz tube-viz" id="r-tube-viz"></div>
+        </div>
+      </section>
+
+      <!-- 11. Compliance -->
+      <section>
+        <h2>Compliance</h2>
+        <div class="eq">C = &Delta;V / &Delta;P &nbsp; (mL / cmH&#8322;O)</div>
+        <div class="two-col" style="margin-top:0.6em;">
+          <div class="viz">
+            <div class="control-panel">
+              <div class="control">
+                <label for="c-deltav-slider">&Delta;V</label>
+                <input type="range" id="c-deltav-slider" min="100" max="800" step="10" value="450" />
+                <span class="value-out" id="c-deltav-output">450 mL</span>
+              </div>
+              <div class="control">
+                <label for="c-deltap-slider">&Delta;P</label>
+                <input type="range" id="c-deltap-slider" min="3" max="35" step="1" value="12" />
+                <span class="value-out" id="c-deltap-output">12 cmH&#8322;O</span>
+              </div>
+            </div>
+            <div class="readout-row">
+              <div class="readout" id="c-value-readout"><span class="label">Compliance</span><span class="val" id="c-value-output">37.5</span></div>
+            </div>
+            <p class="caveat">Illustrative reference only: roughly &gt;50 normal-ish, 30&ndash;50 reduced, &lt;30 markedly reduced (e.g. ARDS, fibrosis, chest wall stiffness).</p>
+          </div>
+          <div class="viz">
+            <div class="lung-viz" id="c-lung-viz"></div>
+            <div class="chart-container" id="c-pv-chart"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12. R vs C comparison -->
+      <section>
+        <h2>Resistance vs. Compliance</h2>
+        <p>Same flow, same tidal volume &mdash; watch how <strong>R</strong> and <strong>C</strong> distort the pressure waveform differently.</p>
+        <div class="viz">
+          <div class="control-panel control-panel-grid">
+            <div class="control">
+              <label for="cmp-r-slider">Resistance (R)</label>
+              <input type="range" id="cmp-r-slider" min="2" max="30" step="1" value="8" />
+              <span class="value-out" id="cmp-r-output">8</span>
+            </div>
+            <div class="control">
+              <label for="cmp-c-slider">Compliance (C)</label>
+              <input type="range" id="cmp-c-slider" min="15" max="100" step="1" value="50" />
+              <span class="value-out" id="cmp-c-output">50</span>
+            </div>
+          </div>
+          <div class="chart-container" id="cmp-chart"></div>
+          <div class="readout-row">
+            <div class="readout"><span class="label">P<sub>peak</sub></span><span class="val" id="cmp-ppeak-output">--</span></div>
+            <div class="readout"><span class="label">P<sub>plat</sub></span><span class="val" id="cmp-pplat-output">--</span></div>
+            <div class="readout"><span class="label">P<sub>peak</sub> &minus; P<sub>plat</sub></span><span class="val" id="cmp-gap-output">--</span></div>
+          </div>
+          <p class="caveat">&uarr; Resistance widens the gap between P<sub>peak</sub> and P<sub>plat</sub>. &darr; Compliance raises <em>both</em> P<sub>peak</sub> and P<sub>plat</sub> together.</p>
+        </div>
+      </section>
+
+      <!-- 13. Section divider: Equation of Motion -->
+      <section class="section-divider">
+        <div class="divider-inner">
+          <div class="divider-index">Section C</div>
+          <h2>The Equation of Motion</h2>
+          <p class="divider-sub">Unifying resistance and compliance</p>
+        </div>
+      </section>
+
+      <!-- 14. Building the equation -->
+      <section>
+        <h2>Building the Equation of Motion</h2>
+        <p>The pressure needed to drive gas into the lung must overcome two opposing forces, plus any baseline pressure already present:</p>
+        <div class="eq" style="font-size:1.1em; margin-top:0.8em;">
+          <span class="fragment fade-up">P<sub>vent</sub> + P<sub>muscle</sub></span>
+          <span class="fragment fade-up"> &nbsp;=&nbsp; (Flow &times; Resistance)</span>
+          <span class="fragment fade-up"> &nbsp;+&nbsp; (Volume / Compliance)</span>
+          <span class="fragment fade-up"> &nbsp;+&nbsp; PEEP</span>
+        </div>
+        <div class="card-grid fragment fade-up" style="grid-template-columns: repeat(3,1fr); margin-top:1em;">
+          <div class="card" style="border-left-color:var(--resistive);"><h3>Resistive pressure</h3><p>Flow &times; R &mdash; overcomes friction in the airway/circuit.</p></div>
+          <div class="card" style="border-left-color:var(--elastic);"><h3>Elastic pressure</h3><p>Volume / C &mdash; overcomes the lung &amp; chest wall's elastic recoil.</p></div>
+          <div class="card" style="border-left-color:var(--peep);"><h3>PEEP</h3><p>The baseline pressure already in the system at end-expiration.</p></div>
+        </div>
+        <p class="caveat fragment fade-up">On a passive patient (P<sub>muscle</sub> = 0), P<sub>vent</sub> alone equals the sum of these three terms.</p>
+      </section>
+
+      <!-- 15. Interactive decomposition -->
+      <section>
+        <h2>Decomposing the Breath</h2>
+        <div class="viz">
+          <div class="control-panel control-panel-grid">
+            <div class="control">
+              <label for="eom-flow-slider">Flow</label>
+              <input type="range" id="eom-flow-slider" min="0.3" max="1.7" step="0.05" value="1.0" />
+              <span class="value-out" id="eom-flow-output">1.00 L/s</span>
+            </div>
+            <div class="control">
+              <label for="eom-r-slider">Resistance (R)</label>
+              <input type="range" id="eom-r-slider" min="2" max="30" step="1" value="10" />
+              <span class="value-out" id="eom-r-output">10</span>
+            </div>
+            <div class="control">
+              <label for="eom-vt-slider">Volume (V<sub>T</sub>)</label>
+              <input type="range" id="eom-vt-slider" min="200" max="800" step="10" value="450" />
+              <span class="value-out" id="eom-vt-output">450 mL</span>
+            </div>
+            <div class="control">
+              <label for="eom-c-slider">Compliance (C)</label>
+              <input type="range" id="eom-c-slider" min="15" max="100" step="1" value="45" />
+              <span class="value-out" id="eom-c-output">45</span>
+            </div>
+            <div class="control">
+              <label for="eom-peep-slider">PEEP</label>
+              <input type="range" id="eom-peep-slider" min="0" max="20" step="1" value="5" />
+              <span class="value-out" id="eom-peep-output">5 cmH&#8322;O</span>
+            </div>
+          </div>
+          <div class="chart-container" id="eom-chart"></div>
+          <div class="eq" id="eom-equation-output" style="margin-top:0.6em;"></div>
+        </div>
+      </section>
+
+      <!-- 16. Section divider: Time Constant -->
+      <section class="section-divider">
+        <div class="divider-inner">
+          <div class="divider-index">Section D</div>
+          <h2>The Time Constant</h2>
+          <p class="divider-sub">&tau; = R &times; C</p>
+        </div>
+      </section>
+
+      <!-- 17. Time constant definition -->
+      <section>
+        <h2>What is the Time Constant?</h2>
+        <div class="eq">&tau; (seconds) = Resistance &times; Compliance</div>
+        <p style="margin-top:0.8em;">&tau; describes how quickly the lung fills or empties passively along an exponential curve. It matters most for <strong>expiration</strong>: if T<sub>e</sub> is shorter than the lung needs, gas is trapped and the next breath stacks on top of it.</p>
+        <ul style="font-size:0.75em; margin-top:0.6em;">
+          <li>After <strong>1&tau;</strong>, ~63% of the volume change has occurred</li>
+          <li>After <strong>3&tau;</strong>, ~95% &mdash; a common rule-of-thumb target for adequate emptying</li>
+          <li>After <strong>5&tau;</strong>, ~99% &mdash; considered essentially complete</li>
+        </ul>
+      </section>
+
+      <!-- 18. Interactive time constant -->
+      <section>
+        <h2>&tau; in Action</h2>
+        <div class="viz">
+          <div class="control-panel control-panel-grid">
+            <div class="control">
+              <label for="tc-r-slider">Resistance (R)</label>
+              <input type="range" id="tc-r-slider" min="2" max="30" step="1" value="10" />
+              <span class="value-out" id="tc-r-output">10</span>
+            </div>
+            <div class="control">
+              <label for="tc-c-slider">Compliance (C)</label>
+              <input type="range" id="tc-c-slider" min="15" max="100" step="1" value="50" />
+              <span class="value-out" id="tc-c-output">50</span>
+            </div>
+            <div class="control">
+              <label for="tc-te-slider">Available T<sub>e</sub></label>
+              <input type="range" id="tc-te-slider" min="0.3" max="3" step="0.05" value="1.2" />
+              <span class="value-out" id="tc-te-output">1.20 s</span>
+            </div>
+          </div>
+          <div class="chart-container" id="tc-chart"></div>
+          <div class="readout-row">
+            <div class="readout"><span class="label">&tau;</span><span class="val" id="tc-tau-output">0.50 s</span></div>
+            <div class="readout"><span class="label">3&tau;</span><span class="val" id="tc-3tau-output">1.50 s</span></div>
+            <div class="readout" id="tc-te-check"><span class="label">T<sub>e</sub> vs. 3&tau;</span><span class="val" id="tc-te-check-output">&mdash;</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18b. Expiratory Flow & Gas Trapping -->
+      <section>
+        <h2>Expiratory Flow &amp; Gas Trapping</h2>
+        <p>Cut T<sub>e</sub> short relative to &tau;, and exhalation is interrupted &mdash; gas gets trapped.</p>
+        <div class="viz" style="padding-top:0.2em;">
+          <div class="control-panel control-panel-grid" style="margin-bottom:0.1em;">
+            <div class="control">
+              <label for="gt-r-slider">Resistance (R)</label>
+              <input type="range" id="gt-r-slider" min="2" max="30" step="1" value="10" />
+              <span class="value-out" id="gt-r-output">10</span>
+            </div>
+            <div class="control">
+              <label for="gt-c-slider">Compliance (C)</label>
+              <input type="range" id="gt-c-slider" min="15" max="100" step="1" value="50" />
+              <span class="value-out" id="gt-c-output">50</span>
+            </div>
+            <div class="control">
+              <label for="gt-te-slider">Available T<sub>e</sub></label>
+              <input type="range" id="gt-te-slider" min="0.3" max="3" step="0.05" value="1.2" />
+              <span class="value-out" id="gt-te-output">1.20 s</span>
+            </div>
+            <div class="control">
+              <label for="gt-vt-slider">Volume (V<sub>T</sub>)</label>
+              <input type="range" id="gt-vt-slider" min="200" max="800" step="10" value="450" />
+              <span class="value-out" id="gt-vt-output">450 mL</span>
+            </div>
+          </div>
+          <div class="chart-container featured" id="gt-chart"></div>
+          <p class="readout-inline">
+            <strong>&tau;</strong> = <span id="gt-tau-output">--</span> &nbsp;&middot;&nbsp;
+            <strong>Exhaled by T<sub>e</sub></strong> = <span id="gt-exhaled-output">--</span> &nbsp;&middot;&nbsp;
+            <strong>Trapped</strong> = <span id="gt-trapped-output">--</span>
+            &nbsp;&mdash; builds auto-PEEP (dynamic hyperinflation).
+          </p>
+        </div>
+      </section>
+
+      <!-- 19. Section divider: Mechanical Power -->
+      <section class="section-divider">
+        <div class="divider-inner">
+          <div class="divider-index">Section E</div>
+          <h2>Mechanical Power</h2>
+          <p class="divider-sub">From a single breath to energy delivered per minute</p>
+        </div>
+      </section>
+
+      <!-- 20. Power concept -->
+      <section>
+        <h2>From Pressure-Volume Loop to Power</h2>
+        <p>The area enclosed by the pressure-volume loop for one breath is the <strong>mechanical energy</strong> delivered that breath. Multiply by respiratory rate and you get <strong>mechanical power</strong> &mdash; energy delivered per minute.</p>
+        <div class="eq" style="margin-top:0.8em;">Power (J/min) &asymp; Energy per breath (J) &times; Respiratory Rate (/min)</div>
+        <p class="caveat" style="margin-top:0.6em;">Higher power has been associated with ventilator-induced lung injury in observational studies &mdash; it is a way of totalling how much mechanical stress the lung receives per minute, not just per breath.</p>
+      </section>
+
+      <!-- 21. Interactive PV loop + power -->
+      <section>
+        <h2>Interactive: Estimating Mechanical Power</h2>
+        <div class="viz">
+          <div class="control-panel control-panel-grid">
+            <div class="control">
+              <label for="mp-vt-slider">Tidal Volume</label>
+              <input type="range" id="mp-vt-slider" min="200" max="800" step="10" value="450" />
+              <span class="value-out" id="mp-vt-output">450 mL</span>
+            </div>
+            <div class="control">
+              <label for="mp-ppeak-slider">Peak Pressure</label>
+              <input type="range" id="mp-ppeak-slider" min="15" max="45" step="1" value="26" />
+              <span class="value-out" id="mp-ppeak-output">26 cmH&#8322;O</span>
+            </div>
+            <div class="control">
+              <label for="mp-peep-slider">PEEP</label>
+              <input type="range" id="mp-peep-slider" min="0" max="20" step="1" value="5" />
+              <span class="value-out" id="mp-peep-output">5 cmH&#8322;O</span>
+            </div>
+            <div class="control">
+              <label for="mp-rr-slider">Resp. Rate</label>
+              <input type="range" id="mp-rr-slider" min="8" max="35" step="1" value="16" />
+              <span class="value-out" id="mp-rr-output">16 /min</span>
+            </div>
+          </div>
+          <div class="chart-row">
+            <div id="mp-pvloop-chart"></div>
+            <div style="flex:1 1 220px;">
+              <div class="readout-row" style="flex-direction:column; gap:0.5em;">
+                <div class="readout" id="mp-value-readout"><span class="label">Mechanical Power</span><span class="val" id="mp-value-output">-- J/min</span></div>
+                <div class="readout" id="mp-zone-readout"><span class="label">Illustrative Zone</span><span class="val" id="mp-zone-output">&mdash;</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="caveat">Simplified constant-flow, volume-control formula (Gattinoni 2016): MP = 0.098 &times; RR &times; V<sub>T</sub>(L) &times; (P<sub>peak</sub> &minus; &frac12;&Delta;P). The ~17&nbsp;J/min marker is an observational-cohort association, not a validated safety threshold.</p>
+        </div>
+      </section>
+
+      <!-- 22. Summary -->
+      <section>
+        <h2>Bringing It Together</h2>
+        <div class="eq" style="font-size:1.0em;">P<sub>vent</sub> = (Flow &times; R) + (Volume / C) + PEEP</div>
+        <div class="card-grid" style="grid-template-columns: repeat(3,1fr); margin-top:1em;">
+          <div class="card"><h3>Resistance &amp; Compliance</h3><p>Define the two terms of the equation of motion.</p></div>
+          <div class="card"><h3>Time Constant (&tau; = R&times;C)</h3><p>Tells you how fast that same system fills or empties passively.</p></div>
+          <div class="card"><h3>Mechanical Power</h3><p>Totals the pressure &times; volume &times; rate exposure the lung receives per minute.</p></div>
+        </div>
+        <p style="margin-top:1em;">Every advanced concept in this workshop is built from the same four primary variables you started with.</p>
+      </section>
+
+      <!-- 23. Discussion case -->
+      <section>
+        <h2>Discussion Case</h2>
+        <div class="callout">
+          A passive, volume-controlled patient: constant flow 0.8 L/s, V<sub>T</sub> 480 mL, PEEP 5 cmH&#8322;O.<br/>
+          P<sub>peak</sub> = 28 cmH&#8322;O, P<sub>plat</sub> = 20 cmH&#8322;O (measured with an end-inspiratory pause).
+        </div>
+        <ul style="font-size:0.78em; margin-top:0.9em;">
+          <li>What is the resistive pressure? What is <strong>R</strong>?</li>
+          <li>What is the elastic pressure? What is <strong>C</strong>?</li>
+          <li>If T<sub>e</sub> available is 1.0 s, is that adequate relative to &tau;?</li>
+          <li>At a respiratory rate of 18/min, roughly what is the mechanical power?</li>
+          <li>Estimate Paw for this breath (assume RR 18/min, I:E 1:2, ascending-ramp waveform).</li>
+          <li>Dead space is &asymp;150 mL. What is the alveolar ventilation at RR 18/min, and what is V<sub>D</sub>/V<sub>T</sub>?</li>
+        </ul>
+        <p class="caveat" style="margin-top:0.8em;">Work through this as a group &mdash; every quantity here was covered in the interactive slides above.</p>
+      </section>
+
+      <!-- 23b. Case answers -->
+      <section>
+        <h2>Case Answers</h2>
+        <div class="card-grid" style="grid-template-columns: repeat(3,1fr);">
+          <div class="card"><h3>1&nbsp;&middot;&nbsp;Resistance</h3><p>R = (P<sub>peak</sub>&minus;P<sub>plat</sub>)/Flow = 8/0.8 = <strong>10 cmH&#8322;O/L/s</strong></p></div>
+          <div class="card"><h3>2&nbsp;&middot;&nbsp;Compliance</h3><p>C = V<sub>T</sub>/(P<sub>plat</sub>&minus;PEEP) = 480/15 &asymp; <strong>32 mL/cmH&#8322;O</strong></p></div>
+          <div class="card"><h3>3&nbsp;&middot;&nbsp;Time Constant</h3><p>&tau; = R&times;C = <strong>0.32 s</strong> &rarr; 3&tau; = 0.96 s &le; T<sub>e</sub>(1.0s): <strong>adequate</strong></p></div>
+          <div class="card"><h3>4&nbsp;&middot;&nbsp;Mech. Power</h3><p>&Delta;P = P<sub>plat</sub>&minus;PEEP = 15 cmH&#8322;O &rarr; MP &asymp; <strong>17.4 J/min</strong></p></div>
+          <div class="card"><h3>5&nbsp;&middot;&nbsp;Mean Paw</h3><p>T<sub>i</sub>/T<sub>CT</sub> = &#8531; (I:E 1:2) &rarr; Paw &asymp; <strong>8.8 cmH&#8322;O</strong></p></div>
+          <div class="card"><h3>6&nbsp;&middot;&nbsp;Dead Space</h3><p>V&#775;A = (480&minus;150)&times;18/1000 &asymp; <strong>5.9 L/min</strong>; V<sub>D</sub>/V<sub>T</sub> &asymp; <strong>0.31</strong></p></div>
+        </div>
+        <p class="caveat" style="margin-top:0.4em;">Working shown is the minimum path to each answer.</p>
+      </section>
+
+      <!-- 24. Closing / references -->
+      <section>
+        <h2>References &amp; Further Reading</h2>
+        <ul style="font-size:0.68em;">
+          <li>Marini JJ, Crooke PS. A general mathematical model for respiratory dynamics relevant to the clinical setting. <em>Am Rev Respir Dis.</em> 1993.</li>
+          <li>Gattinoni L, et al. Ventilator-related causes of lung injury: the mechanical power. <em>Intensive Care Med.</em> 2016.</li>
+          <li>Serpa Neto A, et al. Mechanical power of ventilation is associated with mortality in critically ill patients: an individual patient data meta-analysis. <em>Intensive Care Med.</em> 2018.</li>
+          <li>Pintado MC, et al. Compliance and resistance in the mechanically ventilated patient (review).</li>
+          <li>Pilbeam SP, Cairo JM. <em>Pilbeam's Mechanical Ventilation: Physiological and Clinical Applications</em>, 8th ed. Elsevier; 2023.</li>
+        </ul>
+        <p style="margin-top:1.2em; color:var(--ink-soft); font-size:0.7em;">Thank you &mdash; questions and discussion welcome.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="js/plot-helpers.js"></script>
+  <script src="js/interactives/waveforms.js"></script>
+  <script src="js/interactives/mean-airway-pressure.js"></script>
+  <script src="js/interactives/dead-space.js"></script>
+  <script src="js/interactives/resistance-compliance.js"></script>
+  <script src="js/interactives/equation-of-motion.js"></script>
+  <script src="js/interactives/time-constant.js"></script>
+  <script src="js/interactives/gas-trapping.js"></script>
+  <script src="js/interactives/mechanical-power.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      center: false,
+      controls: true,
+      progress: true,
+      transition: 'slide',
+      width: 1280,
+      height: 720,
+      margin: 0.06
+    });
+  </script>
+</body>
+</html>

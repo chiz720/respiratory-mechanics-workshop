@@ -1,0 +1,316 @@
+/* ===========================================================
+   Mechanical Ventilation Workshop — theme + interactive styles
+   =========================================================== */
+
+:root {
+  --bg: #f5f7fa;
+  --panel-bg: #ffffff;
+  --ink: #1e293b;
+  --ink-soft: #475569;
+  --accent: #0f766e;      /* teal */
+  --accent-2: #2563eb;    /* blue */
+  --accent-3: #7c3aed;    /* violet, used sparingly */
+  --warn: #d97706;
+  --danger: #dc2626;
+  --ok: #16a34a;
+  --line: #cbd5e1;
+  --grid: #e2e8f0;
+  --resistive: #f59e0b;
+  --elastic: #2563eb;
+  --peep: #64748b;
+}
+
+.reveal {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--ink);
+}
+
+.reveal .slides section {
+  text-align: left;
+  background: var(--bg);
+}
+
+.reveal h1, .reveal h2, .reveal h3 {
+  color: var(--accent);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.reveal h1 { font-size: 2.1em; }
+.reveal h2 { font-size: 1.5em; }
+.reveal h3 { font-size: 1.1em; color: var(--ink); }
+
+.reveal p, .reveal li { color: var(--ink); font-size: 0.85em; line-height: 1.4; }
+
+.reveal .subtitle { color: var(--ink-soft); font-weight: 400; }
+
+/* ---------- Title / divider slides ---------- */
+.title-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.title-slide .kicker {
+  color: var(--accent-2);
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: 0.6em;
+  margin-bottom: 0.3em;
+}
+
+.title-slide .presenter {
+  margin-top: 1.6em;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.title-slide .presenter-role {
+  font-weight: 400;
+  color: var(--ink-soft);
+  font-size: 0.85em;
+}
+
+.section-divider {
+  background: linear-gradient(135deg, var(--accent), #115e59) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.section-divider .divider-inner { text-align: center; }
+
+.section-divider h2 {
+  color: #ffffff;
+  font-size: 2.4em;
+  margin-bottom: 0.2em;
+}
+
+.section-divider .divider-index {
+  color: rgba(255,255,255,0.75);
+  font-size: 0.75em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.section-divider .divider-sub {
+  color: rgba(255,255,255,0.9);
+  font-size: 0.8em;
+  max-width: 700px;
+  margin: 0.4em auto 0;
+}
+
+/* ---------- Layout helpers ---------- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2em;
+  align-items: start;
+}
+
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1em;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8em;
+  margin-top: 0.6em;
+}
+
+.card {
+  background: var(--panel-bg);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent-2);
+  border-radius: 8px;
+  padding: 0.7em 0.9em;
+}
+
+.card h3 { margin: 0 0 0.2em 0; font-size: 0.95em; }
+.card .unit { color: var(--ink-soft); font-size: 0.7em; }
+.card p { font-size: 0.7em; margin: 0.3em 0 0; }
+
+/* ---------- Interactive panel ---------- */
+.viz {
+  background: var(--panel-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.5em 0.9em;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  margin-bottom: 0.4em;
+}
+
+/* Opt-in for full-width panels with several sliders, to save vertical space */
+.control-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.25em 1.4em;
+}
+
+.control {
+  display: grid;
+  grid-template-columns: 175px 1fr 70px;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.58em;
+}
+
+.control label { color: var(--ink-soft); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.control input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent-2);
+}
+
+.control .value-out {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: right;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 0.4em;
+  margin-bottom: 0.5em;
+}
+
+.toggle-btn {
+  font-size: 0.6em;
+  padding: 0.35em 0.8em;
+  border-radius: 999px;
+  border: 1px solid var(--accent-2);
+  background: #fff;
+  color: var(--accent-2);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.toggle-btn.active {
+  background: var(--accent-2);
+  color: #fff;
+}
+
+.chart-container { width: 100%; }
+.chart-row { display: flex; gap: 1em; flex-wrap: wrap; }
+.chart-row > div { flex: 1 1 260px; }
+
+.readout-row {
+  display: flex;
+  gap: 0.8em;
+  margin-top: 0.5em;
+  flex-wrap: wrap;
+}
+
+.readout-row.compact {
+  gap: 0.5em;
+  margin-top: 0.15em;
+}
+.readout-row.compact .readout { padding: 0.2em 0.6em; }
+.readout-row.compact .readout .val { font-size: 1.05em; }
+
+.readout {
+  background: #f0fdfa;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  padding: 0.4em 0.8em;
+  font-size: 0.62em;
+}
+
+.readout .label { color: var(--ink-soft); display: block; font-size: 0.85em; }
+.readout .val { font-weight: 700; color: var(--accent); font-size: 1.3em; font-variant-numeric: tabular-nums; }
+
+.readout.warn { background: #fffbeb; border-color: #fcd34d; }
+.readout.warn .val { color: var(--warn); }
+.readout.danger { background: #fef2f2; border-color: #fca5a5; }
+.readout.danger .val { color: var(--danger); }
+.readout.ok { background: #f0fdf4; border-color: #86efac; }
+.readout.ok .val { color: var(--ok); }
+
+.caveat {
+  font-size: 0.55em;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-top: 0.5em;
+}
+
+.eq {
+  font-size: 0.85em;
+  background: #f0fdfa;
+  border: 1px dashed var(--accent);
+  border-radius: 8px;
+  padding: 0.5em 0.8em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.legend { display: flex; gap: 1em; font-size: 0.6em; margin-top: 0.4em; flex-wrap: wrap; }
+.legend .swatch { display: inline-block; width: 0.9em; height: 0.9em; border-radius: 3px; margin-right: 0.3em; vertical-align: -2px; }
+
+/* ---------- SVG chart styling (used by plot-helpers.js) ---------- */
+.ph-svg { width: 100%; height: 205px; display: block; }
+.chart-container.compact .ph-svg { height: 145px; }
+
+.chart-container.featured .ph-svg { height: 325px; }
+.chart-container.featured .ph-tick-label { font-size: 11px; }
+.chart-container.featured .ph-axis-label { font-size: 13px; }
+.chart-container.featured .ph-annotation { font-size: 12px; }
+
+.readout-inline {
+  font-size: 0.62em;
+  color: var(--ink-soft);
+  margin-top: 0.35em;
+}
+.readout-inline strong { color: var(--ink); }
+.readout-inline .ok { color: var(--ok); font-weight: 700; }
+.readout-inline .warn { color: var(--warn); font-weight: 700; }
+.readout-inline .danger { color: var(--danger); font-weight: 700; }
+.ph-axis-line { stroke: var(--ink-soft); stroke-width: 1.5; }
+.ph-gridline { stroke: var(--grid); stroke-width: 1; }
+.ph-tick-label { font-size: 8px; fill: var(--ink-soft); }
+.ph-axis-label { font-size: 9px; fill: var(--ink-soft); font-weight: 600; }
+.ph-line { fill: none; stroke: var(--accent-2); stroke-width: 2.5; }
+.ph-refline { stroke: var(--ink-soft); stroke-width: 1; stroke-dasharray: 4 3; }
+.ph-dot { fill: var(--accent); }
+.ph-annotation { font-size: 8.5px; fill: var(--ink); }
+.ph-rect { }
+
+/* ---------- Timeline (Time slide) ---------- */
+.timeline-bar {
+  display: flex;
+  height: 46px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.timeline-seg { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.6em; font-weight: 700; }
+.timeline-seg.ti { background: var(--elastic); }
+.timeline-seg.te { background: var(--peep); }
+
+/* ---------- Airway / lung visuals ---------- */
+.tube-viz, .lung-viz { display: flex; align-items: center; justify-content: center; }
+
+/* ---------- Case / summary ---------- */
+.callout {
+  border-left: 4px solid var(--accent-3);
+  background: #f5f3ff;
+  padding: 0.6em 0.9em;
+  border-radius: 6px;
+  font-size: 0.7em;
+}
+
+.reveal .progress { color: var(--accent); }
+.reveal .controls { color: var(--accent); }
