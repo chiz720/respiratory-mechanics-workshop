@@ -264,7 +264,8 @@
 .ph-svg { width: 100%; height: 205px; display: block; }
 .chart-container.compact .ph-svg { height: 145px; }
 
-.chart-container.featured .ph-svg { height: 325px; }
+.chart-container.featured .ph-svg { height: 300px; }
+#cc-chart .ph-svg { height: 250px; }
 .chart-container.featured .ph-tick-label { font-size: 11px; }
 .chart-container.featured .ph-axis-label { font-size: 13px; }
 .chart-container.featured .ph-annotation { font-size: 12px; }

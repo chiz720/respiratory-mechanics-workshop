@@ -39,7 +39,7 @@ Then open `http://localhost:8000` and use the arrow keys / on-screen controls to
 ## Project structure
 
 ```
-index.html                    Slide deck shell (28 slides)
+index.html                    Slide deck shell (29 slides)
 css/style.css                 Theme + interactive-panel styling
 js/plot-helpers.js            Shared SVG chart-building utilities
 js/interactives/
@@ -47,6 +47,7 @@ js/interactives/
   mean-airway-pressure.js      Paw = K×(PIP-PEEP)×(Ti/TCT)+PEEP, square vs ramp waveform
   dead-space.js                VE vs VA, dead-space-fixed / Vt-vs-RR efficiency
   resistance-compliance.js     Resistance, Compliance, R-vs-C comparison
+  compliance-curve.js          Reactive sigmoid P-V curve, local ΔV/ΔP tangent, normal vs ARDS
   equation-of-motion.js        Live decomposition of P = (Flow×R) + (Volume/C) + PEEP
   time-constant.js             τ = R×C exponential curve + Te-adequacy check
   gas-trapping.js              Expiratory flow decay + trapped-volume estimate

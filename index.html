@@ -293,6 +293,32 @@
         </div>
       </section>
 
+      <!-- 11b. Sigmoid compliance curve -->
+      <section>
+        <h2>Compliance Isn't One Number</h2>
+        <p>Compliance (&Delta;V/&Delta;P) is the <strong>local slope</strong> of the lung's S-shaped pressure-volume curve.</p>
+        <div class="viz" style="padding-top:0.15em;">
+          <div class="toggle-group" style="margin-bottom:0.15em;">
+            <button class="toggle-btn active" id="cc-mode-normal" data-mode="normal">Normal Lung</button>
+            <button class="toggle-btn" id="cc-mode-ards" data-mode="ards">ARDS / Stiff Lung</button>
+          </div>
+          <div class="control-panel" style="margin-bottom:0.15em;">
+            <div class="control">
+              <label for="cc-p-slider">Pressure</label>
+              <input type="range" id="cc-p-slider" min="1" max="39" step="1" value="15" />
+              <span class="value-out" id="cc-p-output">15 cmH&#8322;O</span>
+            </div>
+          </div>
+          <div class="chart-container featured" id="cc-chart"></div>
+          <p class="readout-inline">
+            <strong>V at P</strong> = <span id="cc-v-output">--</span> &nbsp;&middot;&nbsp;
+            <strong>&Delta;V/&Delta;P</strong> = <span id="cc-compliance-output">--</span> &nbsp;&middot;&nbsp;
+            <strong>Zone</strong>: <span id="cc-zone-output">--</span>
+          </p>
+          <p class="caveat" style="margin-top:0.2em;">Choose PEEP/V<sub>T</sub> to keep tidal breaths on this steep middle segment.</p>
+        </div>
+      </section>
+
       <!-- 12. R vs C comparison -->
       <section>
         <h2>Resistance vs. Compliance</h2>
@@ -593,6 +619,7 @@
   <script src="js/interactives/mean-airway-pressure.js"></script>
   <script src="js/interactives/dead-space.js"></script>
   <script src="js/interactives/resistance-compliance.js"></script>
+  <script src="js/interactives/compliance-curve.js"></script>
   <script src="js/interactives/equation-of-motion.js"></script>
   <script src="js/interactives/time-constant.js"></script>
   <script src="js/interactives/gas-trapping.js"></script>
