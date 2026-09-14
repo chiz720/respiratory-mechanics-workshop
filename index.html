@@ -18,7 +18,6 @@
         <div class="title-slide">
           <div class="kicker">Workshop &middot; Mechanical Ventilation</div>
           <h1>Respiratory Mechanics</h1>
-          <p class="subtitle" style="font-size:0.9em;">From the four primary variables to mean airway pressure, dead space, the equation of motion, time constant, and mechanical power &mdash; taught through live, adjustable graphs.</p>
           <p class="presenter">Idris Chikophe<br/><span class="presenter-role">Paediatric Cardiothoracic Anaesthesiologist &amp; Critical Care Practitioner</span></p>
         </div>
       </section>
@@ -358,19 +357,19 @@
       <!-- 14. Building the equation -->
       <section>
         <h2>Building the Equation of Motion</h2>
-        <p>The pressure needed to drive gas into the lung must overcome two opposing forces, plus any baseline pressure already present:</p>
-        <div class="eq" style="font-size:1.1em; margin-top:0.8em;">
+        <p>Driving pressure overcomes two opposing forces, plus any baseline pressure already present:</p>
+        <div class="eq" style="font-size:0.68em; margin-top:0.5em; white-space:nowrap;">
           <span class="fragment fade-up">P<sub>vent</sub> + P<sub>muscle</sub></span>
-          <span class="fragment fade-up"> &nbsp;=&nbsp; (Flow &times; Resistance)</span>
-          <span class="fragment fade-up"> &nbsp;+&nbsp; (Volume / Compliance)</span>
+          <span class="fragment fade-up"> &nbsp;=&nbsp; (Flow &times; R)</span>
+          <span class="fragment fade-up"> &nbsp;+&nbsp; (Volume / C)</span>
           <span class="fragment fade-up"> &nbsp;+&nbsp; PEEP</span>
         </div>
-        <div class="card-grid fragment fade-up" style="grid-template-columns: repeat(3,1fr); margin-top:1em;">
+        <div class="card-grid fragment fade-up" style="grid-template-columns: repeat(3,1fr); margin-top:0.5em;">
           <div class="card" style="border-left-color:var(--resistive);"><h3>Resistive pressure</h3><p>Flow &times; R &mdash; overcomes friction in the airway/circuit.</p></div>
-          <div class="card" style="border-left-color:var(--elastic);"><h3>Elastic pressure</h3><p>Volume / C &mdash; overcomes the lung &amp; chest wall's elastic recoil.</p></div>
-          <div class="card" style="border-left-color:var(--peep);"><h3>PEEP</h3><p>The baseline pressure already in the system at end-expiration.</p></div>
+          <div class="card" style="border-left-color:var(--elastic);"><h3>Elastic pressure</h3><p>Volume / C &mdash; overcomes elastic recoil.</p></div>
+          <div class="card" style="border-left-color:var(--peep);"><h3>PEEP</h3><p>Baseline pressure already in the system.</p></div>
         </div>
-        <p class="caveat fragment fade-up">On a passive patient (P<sub>muscle</sub> = 0), P<sub>vent</sub> alone equals the sum of these three terms.</p>
+        <p class="caveat fragment fade-up" style="margin-top:0.4em;">Passive patient (P<sub>muscle</sub>=0): P<sub>vent</sub> alone equals this sum.</p>
       </section>
 
       <!-- 15. Interactive decomposition -->
