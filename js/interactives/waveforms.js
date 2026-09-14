@@ -15,6 +15,7 @@
     if (!vtSlider || !container) return;
 
     const TE = 2.0; // fixed, so changing Ti visibly reshapes the curve instead of just rescaling the axis
+    const TAU = 0.5; // fixed illustrative passive expiratory time constant (R/C aren't introduced until later slides)
 
     function render() {
       const vt = parseFloat(vtSlider.value);
@@ -22,33 +23,45 @@
       vtOut.textContent = vt + ' mL';
       tiOut.textContent = ti.toFixed(2) + ' s';
 
+      // Inspiration: linear rise (constant inspiratory flow). Expiration: passive
+      // exponential decay back toward zero (constant time constant TAU), not a
+      // straight line — real expiratory flow is never constant.
+      const n = 40;
+      const volPts = [[0, 0], [ti, vt]];
+      for (let i = 1; i <= n; i++) {
+        const t = ti + (i / n) * TE;
+        volPts.push([t, vt * Math.exp(-(t - ti) / TAU)]);
+      }
       const chart = PH.makeChart(container, {
         width: 300, height: 260,
         xDomain: [0, 4.5], yDomain: [0, 800],
         xLabel: 'Time (s)', yLabel: 'Volume (mL)',
         xTicks: 4, yTicks: 4
       });
-      const pts = [[0, 0], [ti, vt], [ti + TE, 0]].map(p => [chart.x(p[0]), chart.y(p[1])]);
-      chart.addPath(PH.linePath(pts), { stroke: 'var(--accent-2)' });
+      chart.addPath(PH.linePath(volPts.map(p => [chart.x(p[0]), chart.y(p[1])])), { stroke: 'var(--accent-2)' });
       chart.addLine(chart.x(ti), chart.y(0), chart.x(ti), chart.y(vt), { stroke: 'var(--ink-soft)' });
       chart.addText(chart.x(ti) + 4, chart.y(vt) - 6, 'end-inspiration', {});
 
       // The flow that, integrated, produces the volume curve above: a constant
-      // inspiratory flow (Vt/Ti) followed by a constant expiratory flow (-Vt/Te).
+      // inspiratory flow (Vt/Ti), then a passive exponential decay in expiratory
+      // flow, matching the curved (not straight-line) fall in volume above.
       const inspFlow = (vt / 1000) / ti; // L/s
-      const expFlow = (vt / 1000) / TE; // L/s
+      const peakExpFlow = (vt / 1000) / TAU; // L/s, flow magnitude the instant exhalation starts
+      const flowPts = [[0, 0], [0, inspFlow], [ti, inspFlow], [ti, -peakExpFlow]];
+      for (let i = 1; i <= n; i++) {
+        const t = ti + (i / n) * TE;
+        flowPts.push([t, -peakExpFlow * Math.exp(-(t - ti) / TAU)]);
+      }
+      flowPts.push([4.5, 0]);
       const flowChart = PH.makeChart(flowContainer, {
         width: 300, height: 260,
-        xDomain: [0, 4.5], yDomain: [-0.5, 1.8], // fixed: covers the full slider range so changes stay honestly proportioned
+        xDomain: [0, 4.5], yDomain: [-1.8, 1.8], // fixed: covers the full slider range so changes stay honestly proportioned
         xLabel: 'Time (s)', yLabel: 'Flow (L/s)',
         xTicks: 4, yTicks: 4
       });
-      const flowPts = [
-        [0, 0], [0, inspFlow], [ti, inspFlow], [ti, -expFlow], [ti + TE, -expFlow], [ti + TE, 0], [4.5, 0]
-      ].map(p => [flowChart.x(p[0]), flowChart.y(p[1])]);
       flowChart.addLine(flowChart.x(0), flowChart.y(0), flowChart.x(4.5), flowChart.y(0), { stroke: 'var(--ink-soft)' });
-      flowChart.addPath(PH.linePath(flowPts), { stroke: 'var(--resistive)' });
-      flowChart.addLine(flowChart.x(ti), flowChart.y(-0.5), flowChart.x(ti), flowChart.y(1.8), { stroke: 'var(--ink-soft)' });
+      flowChart.addPath(PH.linePath(flowPts.map(p => [flowChart.x(p[0]), flowChart.y(p[1])])), { stroke: 'var(--resistive)' });
+      flowChart.addLine(flowChart.x(ti), flowChart.y(-1.8), flowChart.x(ti), flowChart.y(1.8), { stroke: 'var(--ink-soft)' });
     }
     vtSlider.addEventListener('input', render);
     tiSlider.addEventListener('input', render);

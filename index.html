@@ -160,7 +160,7 @@
             <div class="readout"><span class="label">Paw</span><span class="val" id="maw-paw-output">--</span></div>
             <div class="readout"><span class="label">T<sub>i</sub></span><span class="val" id="maw-ti-output">--</span></div>
           </div>
-          <p class="caveat" style="margin-top:0.25em;">PIP, PEEP, I:E, or a squarer waveform all raise Paw; RR alone (fixed I:E) does not.</p>
+          <p class="caveat" style="margin-top:0.15em;">PIP, PEEP, I:E, and waveform shape all raise Paw &mdash; RR alone doesn't.</p>
         </div>
       </section>
 
@@ -194,12 +194,12 @@
       <section>
         <h2>Dead Space Ventilation</h2>
         <p>Dead space (V<sub>D</sub>) is wasted each breath and barely falls as V<sub>T</sub> changes, so it eats a <strong>bigger share</strong> of small breaths.</p>
-        <div class="viz" style="margin-top:0.3em; padding-top:0.35em;">
-          <div class="toggle-group" style="margin-bottom:0.25em;">
+        <div class="viz" style="margin-top:0.2em; padding-top:0.2em;">
+          <div class="toggle-group" style="margin-bottom:0.15em;">
             <button class="toggle-btn" id="ds-preset-slow">Preset: slow &amp; deep</button>
             <button class="toggle-btn" id="ds-preset-fast">Preset: fast &amp; shallow</button>
           </div>
-          <div class="control-panel control-panel-grid" style="margin-bottom:0.2em;">
+          <div class="control-panel control-panel-grid" style="margin-bottom:0.15em;">
             <div class="control">
               <label for="ds-vt-slider">Tidal Volume</label>
               <input type="range" id="ds-vt-slider" min="200" max="800" step="10" value="500" />
@@ -223,7 +223,7 @@
             <div class="readout"><span class="label">Wasted</span><span class="val" id="ds-wasted-output">--</span></div>
             <div class="readout" id="ds-ratio-readout"><span class="label">V<sub>D</sub>/V<sub>T</sub></span><span class="val" id="ds-ratio-output">--</span></div>
           </div>
-          <p class="caveat" style="margin-top:0.25em;">&uarr;V<sub>T</sub> grows V&#775;A more efficiently than &uarr;RR alone &mdash; but both are capped by lung mechanics and gas trapping.</p>
+          <p class="caveat" style="margin-top:0.15em;">&uarr;V<sub>T</sub> grows V&#775;A more efficiently than &uarr;RR alone &mdash; both are capped by the lung.</p>
         </div>
       </section>
 

@@ -24,8 +24,8 @@
   if (!pSlider || !container) return;
 
   const CURVES = {
-    normal: { vmax: 1000, pmid: 15, k: 0.15 },
-    ards: { vmax: 500, pmid: 20, k: 0.12 }
+    normal: { vmax: 1000, pmid: 18, k: 0.28 },
+    ards: { vmax: 500, pmid: 22, k: 0.24 }
   };
   let mode = 'normal';
 
@@ -78,10 +78,18 @@
     chart.addText(chart.x(curve.pmid), chart.y(yMax) + 6, 'sweet spot', { 'text-anchor': 'middle', fill: 'var(--ok)', 'font-weight': 'bold' });
     chart.addText(chart.x(highP), chart.y(yMax) + 6, 'overdistension risk', { 'text-anchor': 'middle', fill: 'var(--danger)' });
 
-    // Tangent chord through the operating point, visualizing "change in volume over change in pressure".
+    // Secant through the operating point, drawn as a rise/run right triangle so
+    // ΔP (the horizontal leg) and ΔV (the vertical leg) are literally visible,
+    // not just implied by the slope of a single diagonal line.
     const tx1 = Math.max(0, p - h), tx2 = Math.min(40, p + h);
-    chart.addPath(PH.linePath([[chart.x(tx1), chart.y(vLo)], [chart.x(tx2), chart.y(vHi)]]), { stroke: 'var(--accent-3)', 'stroke-width': 3 });
-    chart.addDot(chart.x(p), chart.y(v), { fill: 'var(--accent-3)', r: 6 });
+    const xLo = chart.x(tx1), xHi = chart.x(tx2), yLo = chart.y(vLo), yHi = chart.y(vHi);
+    chart.addPath(PH.linePath([[xLo, yLo], [xHi, yHi]]), { stroke: 'var(--accent-3)', 'stroke-width': 3 });
+    chart.addPath(PH.linePath([[xLo, yLo], [xHi, yLo]]), { stroke: 'var(--accent-3)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' });
+    chart.addPath(PH.linePath([[xHi, yLo], [xHi, yHi]]), { stroke: 'var(--accent-3)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' });
+    chart.addDot(xLo, yLo, { fill: 'var(--accent-3)', r: 5 });
+    chart.addDot(xHi, yHi, { fill: 'var(--accent-3)', r: 5 });
+    chart.addText((xLo + xHi) / 2, yLo + 16, 'ΔP', { 'text-anchor': 'middle', fill: 'var(--accent-3)', 'font-weight': 'bold' });
+    chart.addText(xHi + 8, (yLo + yHi) / 2 + 4, 'ΔV', { 'text-anchor': 'start', fill: 'var(--accent-3)', 'font-weight': 'bold' });
   }
 
   function setMode(newMode) {
