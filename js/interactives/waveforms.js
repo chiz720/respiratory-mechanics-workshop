@@ -11,7 +11,10 @@
     const vtOut = document.getElementById('volume-vt-output');
     const tiOut = document.getElementById('volume-ti-output');
     const container = document.getElementById('volume-chart');
+    const flowContainer = document.getElementById('volume-flow-chart');
     if (!vtSlider || !container) return;
+
+    const TE = 2.0; // fixed, so changing Ti visibly reshapes the curve instead of just rescaling the axis
 
     function render() {
       const vt = parseFloat(vtSlider.value);
@@ -19,17 +22,33 @@
       vtOut.textContent = vt + ' mL';
       tiOut.textContent = ti.toFixed(2) + ' s';
 
-      const te = 2.0; // fixed, so changing Ti visibly reshapes the curve instead of just rescaling the axis
       const chart = PH.makeChart(container, {
-        width: 520, height: 260,
+        width: 300, height: 260,
         xDomain: [0, 4.5], yDomain: [0, 800],
         xLabel: 'Time (s)', yLabel: 'Volume (mL)',
         xTicks: 4, yTicks: 4
       });
-      const pts = [[0, 0], [ti, vt], [ti + te, 0]].map(p => [chart.x(p[0]), chart.y(p[1])]);
+      const pts = [[0, 0], [ti, vt], [ti + TE, 0]].map(p => [chart.x(p[0]), chart.y(p[1])]);
       chart.addPath(PH.linePath(pts), { stroke: 'var(--accent-2)' });
       chart.addLine(chart.x(ti), chart.y(0), chart.x(ti), chart.y(vt), { stroke: 'var(--ink-soft)' });
       chart.addText(chart.x(ti) + 4, chart.y(vt) - 6, 'end-inspiration', {});
+
+      // The flow that, integrated, produces the volume curve above: a constant
+      // inspiratory flow (Vt/Ti) followed by a constant expiratory flow (-Vt/Te).
+      const inspFlow = (vt / 1000) / ti; // L/s
+      const expFlow = (vt / 1000) / TE; // L/s
+      const flowChart = PH.makeChart(flowContainer, {
+        width: 300, height: 260,
+        xDomain: [0, 4.5], yDomain: [-0.5, 1.8], // fixed: covers the full slider range so changes stay honestly proportioned
+        xLabel: 'Time (s)', yLabel: 'Flow (L/s)',
+        xTicks: 4, yTicks: 4
+      });
+      const flowPts = [
+        [0, 0], [0, inspFlow], [ti, inspFlow], [ti, -expFlow], [ti + TE, -expFlow], [ti + TE, 0], [4.5, 0]
+      ].map(p => [flowChart.x(p[0]), flowChart.y(p[1])]);
+      flowChart.addLine(flowChart.x(0), flowChart.y(0), flowChart.x(4.5), flowChart.y(0), { stroke: 'var(--ink-soft)' });
+      flowChart.addPath(PH.linePath(flowPts), { stroke: 'var(--resistive)' });
+      flowChart.addLine(flowChart.x(ti), flowChart.y(-0.5), flowChart.x(ti), flowChart.y(1.8), { stroke: 'var(--ink-soft)' });
     }
     vtSlider.addEventListener('input', render);
     tiSlider.addEventListener('input', render);
