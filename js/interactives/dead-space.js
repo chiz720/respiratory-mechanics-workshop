@@ -46,7 +46,7 @@
 
     const chart = PH.makeChart(container, {
       width: 640, height: 260,
-      xDomain: [0, 1], yDomain: [0, 30],
+      xDomain: [0, 1], yDomain: [0, 35],
       xLabel: '', yLabel: 'Ventilation (L/min)', xTicks: 0, yTicks: 6
     });
     const barCx = chart.padding.left + chart.plotW / 2;
